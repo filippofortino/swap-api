@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class FolderSeeder extends Seeder
@@ -11,8 +12,17 @@ class FolderSeeder extends Seeder
      */
     public function run()
     {
+        $root = new App\Models\Folder;
+        $root->uuid = Str::uuid();
+        $root->name = 'root';
+        $root->folder_id = null;
+        
+        $root->save();
+
+        App\Models\Folder::find(1)->update(['folder_id' => 1]);
+
         factory(App\Models\Folder::class, 80)->create();
-        $folderIds = App\Models\Folder::pluck('id');
+        $folderIds = App\Models\Folder::pluck('id')->skip(1);
 
         // This is not optimal, some folders might be inside multiple folders, 
         // which is imbossible. However, that should be ok for testing purposes.

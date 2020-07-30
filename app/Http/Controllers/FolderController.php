@@ -15,8 +15,7 @@ class FolderController extends Controller
     public function index()
     {
         return response()->json(
-            // return json_encode(
-            Folder::with(['files', 'folders'])->whereNull('folder_id')->get()
+            Folder::all()
         );
     }
 
@@ -49,10 +48,13 @@ class FolderController extends Controller
      */
     public function show($id)
     {
+        // Allow to make a call like: folders/root instead of folders/1
+        // for the root folder
+        $id !== 'root' ?: $id = 1;
+
         return response()->json(
-            // return json_encode(
             Folder::with(['files', 'folders' => function($query) {
-                $query->where('id', '!=', 0);
+                $query->where('id', '!=', 1);
             }])->where('id', $id)->get()
         );
     }

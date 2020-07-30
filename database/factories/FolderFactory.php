@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(Folder::class, function (Faker $faker) {
     return [
         'uuid' => $faker->uuid,
-        'folder_id' => null,
+        'folder_id' => 1,
         'name' => $faker->lexify('Folder ?????'),
     ];
 });
