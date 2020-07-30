@@ -15,11 +15,9 @@ class FolderSeeder extends Seeder
         $root = new App\Models\Folder;
         $root->uuid = Str::uuid();
         $root->name = 'root';
-        $root->folder_id = null;
+        $root->folder_id = 1;
         
         $root->save();
-
-        App\Models\Folder::find(1)->update(['folder_id' => 1]);
 
         factory(App\Models\Folder::class, 80)->create();
         $folderIds = App\Models\Folder::pluck('id')->skip(1);

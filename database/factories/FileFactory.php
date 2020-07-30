@@ -8,9 +8,11 @@ use Faker\Generator as Faker;
 $factory->define(File::class, function (Faker $faker) {
     $filename = "{$faker->md5}.{$faker->fileExtension}";
     $preview = null;
+    $mime = $faker->mimeType;
     if(rand(0, 1)) {
         $filename = "{$faker->md5}.jpg";
         $preview = $faker->imageUrl(640, 800, 'nature');
+        $mime = 'image/jpeg';
     }
 
     return [
@@ -18,7 +20,7 @@ $factory->define(File::class, function (Faker $faker) {
         'folder_id' => 1,
         'name' => $filename,
         'preview' => $preview,
-        'mime_type' => $faker->mimeType,
+        'mime_type' => $mime,
         'size' => rand(500, 350000),
         'hash' => $faker->sha256
     ];
