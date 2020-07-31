@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Folder;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class FolderController extends Controller
 {
@@ -48,15 +49,25 @@ class FolderController extends Controller
      */
     public function show($id)
     {
-        // Allow to make a call like: folders/root instead of folders/1
-        // for the root folder
-        $id !== 'root' ?: $id = 1;
+        $folder = Folder::with(['files', 'folders' => function($query) {
+            $query->where('id', '!=', 1);
+        }]);
 
-        return response()->json(
-            Folder::with(['files', 'folders' => function($query) {
-                $query->where('id', '!=', 1);
-            }])->where('id', $id)->get()
-        );
+        // Allow to make a call like: folders/root instead of folders/uuid
+        // for the root folder
+        if($id === 'root') {
+            $folder = $folder->find(1);
+        } else {
+            $folder = $folder->firstWhere('uuid', $id);
+        }
+
+        $folder ?: abort(Response::HTTP_NOT_FOUND);
+
+        return response()->json([
+            'folder' => $folder,
+            // Breadcrumbs are not needed when in root, so we avoid a useless query
+            'breadcrumbs' => $id !== 'root' ? $folder->breadcrumbs() : null
+        ]);
     }
 
     /**
