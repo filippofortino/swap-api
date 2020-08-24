@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Dyrynda\Database\Support\GeneratesUuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Folder extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, GeneratesUuid;
 
     public function parentFolder() {
         return $this->folder()->with('parentFolder');

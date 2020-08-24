@@ -14,20 +14,10 @@ class FolderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {   
         return response()->json(
             Folder::all()
         );
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -38,7 +28,18 @@ class FolderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'parent_folder' => 'required|integer|exists:folders,id',
+            'name' => 'required|string|max:80|min:1'
+        ]);
+
+        $folder = new Folder();
+        $folder->folder_id = $request->parent_folder;
+        $folder->name = $request->name;
+
+        $folder->save();
+
+        return response()->json($folder);
     }
 
     /**
