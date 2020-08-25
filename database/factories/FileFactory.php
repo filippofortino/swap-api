@@ -19,6 +19,7 @@ $factory->define(File::class, function (Faker $faker) {
         'uuid' => $faker->uuid,
         'folder_id' => 1,
         'name' => $filename,
+        'path' => $filename,
         'preview' => $preview,
         'mime_type' => $mime,
         'size' => rand(500, 350000),
