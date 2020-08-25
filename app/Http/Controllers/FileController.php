@@ -57,8 +57,6 @@ class FileController extends Controller
             }
 
             return response()->json($file);
-            // return response($file->uuid, Response::HTTP_OK)
-            //         ->header('Content-Type', 'text/plain');
         }
     }
 
