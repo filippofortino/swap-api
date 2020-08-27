@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Requests\StoreUploadedFileRequest;
 
 class FileController extends Controller
 {
@@ -26,38 +27,37 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUploadedFileRequest $request)
     {
-        if($request->file('filepond')->isValid() && $request->has('filepond')) {
-            // $uploadedFile = $request->file('filepond')->store("tmp", 'local');
-            $uploadedFile = $request->file('filepond');
-            $file_hash = hash_file('sha256', $uploadedFile->path());
-            $parent_folder = json_decode($request->input('filepond'))->parent_folder;
+        
+        $validated = $request->validated();
 
-            // Save the file only if it doesn't already exists on
-            // the server.
-            $fileAlreadyExists = File::withTrashed()->where('hash', $file_hash)->first();
-            if(!$fileAlreadyExists) {
-                $savedFile = $uploadedFile->store('files', 'local');
+        $uploadedFile = $request->file('filepond');
 
-                $file = new File();
-                $file->folder_id = $parent_folder;
-                $file->name = $uploadedFile->getClientOriginalName();
-                $file->path = $savedFile;
-                $file->mime_type = Storage::mimeType($savedFile);
-                $file->size = Storage::size($savedFile);
-                $file->hash = $file_hash;
-                $file->save();
-            } else {
-                $file = $fileAlreadyExists->replicate();
-                $file->folder_id = $parent_folder;
-                $file->uuid = Str::uuid();
-                $file->name = $uploadedFile->getClientOriginalName();
-                $file->save();
-            }
+        // Save the file only if it doesn't already exists on
+        // the server.
+        $fileAlreadyExists = File::withTrashed()->where('hash', $request->file_hash)->first();
+        if(!$fileAlreadyExists) {
+            $savedFile = $uploadedFile->store('files', 'local');
 
-            return response()->json($file);
+            $file = File::create([
+                'folder_id' => $request->parent_folder,
+                'name' => $request->file_name,
+                'path' => $savedFile,
+                'mime_type' => Storage::mimeType($savedFile),
+                'size' => Storage::size($savedFile),
+                'hash' => $request->file_hash
+            ]);
+        } else {
+            $file = $fileAlreadyExists->replicate();
+
+            $file->folder_id = $request->parent_folder;
+            $file->uuid = Str::uuid();
+            $file->name = $request->file_name;
+            $file->save();
         }
+
+        return response()->json($file);
     }
 
     /**
