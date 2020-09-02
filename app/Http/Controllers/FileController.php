@@ -85,15 +85,30 @@ class FileController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\File  $file
+     * 
+     * We do not take the $file as for the route definition
+     * in this method.
+     * To keep the routes file clean with just the
+     * API Resource definition, we will call this endpoint
+     * with a dummy parameter like 'files/delete' but 
+     * we're not actually gonna use it, it's just to make
+     * it work.
+     * Insteat we will take the $request as all the necessary 
+     * data will be passed there.
+     * 
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(File $file)
+    public function destroy(Request $request)
     {
-        //
+        return response()->json($request->ids);
     }
 
+    /**
+     * Remove a newly uploaded file
+     *
+     * @param  \Illuminate\Http\Request  $request
+     */
     public function revert(Request $request) {
         $file_uuid = $request->getContent();
 
