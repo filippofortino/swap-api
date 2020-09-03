@@ -101,7 +101,16 @@ class FileController extends Controller
      */
     public function destroy(Request $request)
     {
-        return response()->json($request->ids);
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*' => 'numeric|exists:files,id'
+        ]);
+
+        foreach($request->items as $file) {
+            File::find($file)->delete();
+        }
+
+        return response()->json($request->items);
     }
 
     /**
