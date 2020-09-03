@@ -11,7 +11,9 @@ $factory->define(File::class, function (Faker $faker) {
     $mime = $faker->mimeType;
     if(rand(0, 1)) {
         $filename = "{$faker->md5}.jpg";
-        $preview = $faker->imageUrl(640, 800, 'nature');
+        $image_id = (string)rand(1, 1100);
+        $preview = "https://picsum.photos/id/{$image_id}/640/800";
+        // $preview = $faker->imageUrl(640, 800, 'nature');
         $mime = 'image/jpeg';
     }
 
