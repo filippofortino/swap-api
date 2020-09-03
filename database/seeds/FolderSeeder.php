@@ -14,7 +14,7 @@ class FolderSeeder extends Seeder
     {
         $root = new App\Models\Folder;
         $root->uuid = Str::uuid();
-        $root->name = 'root';
+        $root->name = 'Home';
         
         $root->save();
 
