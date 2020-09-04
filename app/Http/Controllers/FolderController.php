@@ -102,6 +102,15 @@ class FolderController extends Controller
      */
     public function destroy(Request $request)
     {
-        return response()->json($request->ids);
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*' => 'numeric|exists:folders,id'
+        ]);
+
+        foreach($request->items as $folder) {
+            Folder::find($folder)->deleteWithContent();
+        }
+
+        return response()->json($request->items);
     }
 }

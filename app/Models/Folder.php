@@ -27,6 +27,18 @@ class Folder extends Model
 
         return $breadcrumbs;
     }
+
+    /**
+     * Delete the current folder and all of it's content.
+     * 
+     * @param bool $force
+     * @return null
+     */
+    public function deleteWithContent($force = false) {
+        $force ? $this->files()->forceDelete() : $this->files()->delete();
+        $this->folders()->get()->each(fn($folder) => $folder->deleteWithContent($force));
+        $force ? $this->forceDelete() : $this->delete();
+    }
     
     public function files() {
         return $this->hasMany('App\Models\File');
