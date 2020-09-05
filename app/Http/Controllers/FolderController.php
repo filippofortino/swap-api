@@ -72,26 +72,20 @@ class FolderController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  App\Models\Folder  $folder
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Folder $folder)
     {
-        //
+        $folder->update(
+            $request->validate([
+                'folder_id' => 'required|integer|exists:folders',
+                'name' => 'required|string|max:80|min:1'
+            ])
+        );
     }
 
     /**

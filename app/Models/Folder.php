@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Folder extends Model
 {
     use SoftDeletes, GeneratesUuid;
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['folder_id', 'name'];
 
     public function parentFolder() {
         return $this->folder()->with('parentFolder');
