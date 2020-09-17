@@ -20,4 +20,16 @@ class File extends Model
     public function folder() {
         return $this->belongsTo('App\Models\Folder');
     }
+
+    public function computedPath() {
+        $folder = $this->folder;
+
+        $path = [];
+        while($folder->folder !== null) {
+            array_unshift($path, $folder->name);
+            $folder = $folder->folder;
+        }
+
+        return implode('/', $path);
+    }
 }
