@@ -30,6 +30,6 @@ class File extends Model
             $folder = $folder->folder;
         }
 
-        return implode('/', $path);
+        return implode('/', $path) . "/{$this->name}";
     }
 }
