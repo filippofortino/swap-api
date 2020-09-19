@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Folder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('folders', 'FolderController');
 Route::delete('files/revert', 'FileController@revert')->name("files.revert");
 Route::apiResource('files', 'FileController');
+Route::post('items/download', 'DownloadItemController@download')->name('items.download');
