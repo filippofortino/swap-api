@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Zip;
 use App\Models\File;
-use Illuminate\Http\Request;
 use App\Models\Folder;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class DownloadItemController extends Controller
 {
@@ -23,27 +24,38 @@ class DownloadItemController extends Controller
         $files = File::find($validated['files']);
         $folders = Folder::find($validated['folders']);
         
+        // If only one file is being requested just download that file instead of zipping
+        if($files->count() === 1 && $folders->count() === 0) {
+            $file = $files->first();
+            return response()->download(storage_path("app/{$file->path}"),'', ['test' => 'idk']);
+        }
+        
         foreach($folders as $folder) {
-            $this->getAllFiles($folder);
+            $this->addNestedFilesToZip($folder);
         }
 
         foreach($files as $file) {
-            $this->zipContent[storage_path("app/{$file->path}")] = $file->name;
+            $this->addToZip($file);
         }
 
-        return Zip::create('test.zip', $this->zipContent);
+        $filename = Str::random(10);
+        return Zip::create("{$filename}.zip", $this->zipContent);
     }
 
-    protected function getAllFiles($folder) {
+    protected function addNestedFilesToZip($folder) {
         $files = $folder->files;
         $folders = $folder->folders;
 
         foreach($files as $file) {
-            $this->zipContent[storage_path("app/{$file->path}")] = $file->computedPath();
+            $this->addToZip($file, true);
         }
 
         foreach($folders as $folder) {
-            $this->getAllFiles($folder);
+            $this->addNestedFilesToZip($folder);
         }
+    }
+
+    protected function addToZip($file, $nested = false) {
+        $this->zipContent[storage_path("app/{$file->path}")] = $nested ? $file->computedPath() : $file->name;
     }
 }
