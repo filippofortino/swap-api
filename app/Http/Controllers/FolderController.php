@@ -80,12 +80,11 @@ class FolderController extends Controller
      */
     public function update(Request $request, Folder $folder)
     {
-        $folder->update(
-            $request->validate([
-                'folder_id' => 'required|integer|exists:folders',
-                'name' => 'required|string|max:80|min:1'
-            ])
-        );
+        $request->validate([
+            'folder_id' => 'required|integer|exists:folders',
+            'name' => 'required|string|max:80|min:1'
+        ]);
+        $folder->update($request->validated());
     }
 
     /**
