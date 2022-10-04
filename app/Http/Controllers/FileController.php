@@ -80,12 +80,11 @@ class FileController extends Controller
      */
     public function update(Request $request, File $file)
     {
-        $file->update(
-            $request->validate([
-                'folder_id' => 'required|integer|exists:folders',
-                'name' => 'required|string|min:1'
-            ])
-        );
+        $request->validate([
+            'folder_id' => 'required|integer|exists:folders',
+            'name' => 'required|string|min:1'
+        ]);
+        $file->update($request->validated());
     }
 
     /**
